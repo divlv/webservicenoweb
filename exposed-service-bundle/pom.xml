@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>lv.div.exposedservice</groupId>
+        <artifactId>exposedservice-parent</artifactId>
+        <version>1.0.0</version>
+        <relativePath>..</relativePath>
+    </parent>
+
+    <!--This is just a "bundle" module, used for packing our app into the EAR archive,-->
+    <!--which may consists from many different (jar, ejb, web, etc.) modules.-->
+
+    <artifactId>exposed-service-bundle</artifactId>
+    <name>Exposed Web Service without web module (bundle)</name>
+    <packaging>ear</packaging>
+
+    <properties>
+        <!--RestEasy version used in WildFly 9-->
+        <resteasy.version>3.0.11.Final</resteasy.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>lv.div.exposedservice</groupId>
+            <artifactId>exposed-service</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+            <version>${resteasy.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jackson-provider</artifactId>
+            <version>${resteasy.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <version>2.10.1</version>
+                <configuration>
+                    <applicationName>${project.artifactId}</applicationName>
+                    <defaultLibBundleDir>APP-INF/lib</defaultLibBundleDir>
+                    <modules>
+                        <!--jarModule>
+                            <groupId>jar_module_group_id</groupId>
+                            <artifactId>jar_module_artifact_id</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule-->
+                        <!--ejbModule>
+                        <groupId>ejb_module_group_id</groupId>
+                        <artifactId>ejb_module_artifact_id</artifactId>
+                        </ejbModule-->
+                        <webModule>
+                            <groupId>lv.div.exposedservice</groupId>
+                            <artifactId>exposed-service</artifactId>
+                            <!--If "contextRoot" option is present, it should map the root path-->
+                            <!--of web service to the mentioned one-->
+                            <!--However, I had a case, when having this option enabled,-->
+                            <!--in fact, I had mapping like this: ".../exposed-service-1.0.0-SNAPSHOT"-->
+                            <!--Commenting out this option, turns mapping as expected to "/exposed-service"-->
+                            <contextRoot>/exposed-service</contextRoot>
+                        </webModule>
+
+                    </modules>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
