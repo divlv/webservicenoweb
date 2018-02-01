@@ -12,3 +12,4 @@ Build project: `mvn clean package`
 
 then, deploy to **WildFly 9+** your resulting: `exposed-service-bundle\target\exposed-service-bundle.ear`
 
+Deployed application (sample URL) should be available at: `http://localhost:8080/exposed-service/get`
