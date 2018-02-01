@@ -7,6 +7,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Just a sample web service
@@ -69,6 +74,36 @@ public class SampleWebService {
         final GenericResponse r = new GenericResponse();
         r.setValue("POST-ed value = " + inputValue);
         return r;
+    }
+
+    /**
+     * GET request, which dumps resources to a temporary file.
+     * It simply shows, that resources are packed correctly and accessible to application.
+     *
+     * @return GenericResponse object in JSON format
+     */
+    @GET
+    @Path("/dump")
+    @Produces({MediaType.APPLICATION_JSON})
+    public GenericResponse dumpResources() {
+
+        final String RESOURCE_FILE_NAME = "file.txt";
+        InputStream is = getClass().getClassLoader().getResourceAsStream(RESOURCE_FILE_NAME);
+        String tempFilePath = "";
+        try {
+            File tempFile = File.createTempFile(RESOURCE_FILE_NAME, ".tmp");
+            tempFile.deleteOnExit();
+            // This native Java method (Files.copy) available since Java 7:
+            Files.copy(is, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            tempFilePath = tempFile.toPath().toString();
+        } catch (IOException e) {
+            e.printStackTrace(); // Hmm... something is wrong
+        }
+
+        final GenericResponse r = new GenericResponse();
+        r.setValue("Resource file dumped to  " + tempFilePath);
+        return r;
+
     }
 
 }
